@@ -482,6 +482,7 @@ function getRemindersByDateKey(){
 function renderMiniCalendar(){
     const grid = document.getElementById("mcGrid");
     const label = document.getElementById("mcMonthLabel");
+    const foot = document.getElementById("mcFoot");
     grid.innerHTML = "";
 
     label.innerText = `${MONTH_NAMES[mcViewMonth]} ${mcViewYear}`;
@@ -493,12 +494,17 @@ function renderMiniCalendar(){
     const isCurrentMonth = (today.getFullYear() === mcViewYear && today.getMonth() === mcViewMonth);
 
     const remindersByDate = getRemindersByDateKey();
+    let monthReminderCount = 0;
+    let monthUrgentCount = 0;
 
     for(let i = 0; i < firstDay; i++){
         const empty = document.createElement("div");
         empty.className = "mc-day empty";
         grid.appendChild(empty);
     }
+
+    // priority order for tinting a day when multiple urgency levels stack
+    const levelRank = { urgent: 3, soon: 2, safe: 1, unknown: 0 };
 
     for(let day = 1; day <= daysInMonth; day++){
         const cell = document.createElement("div");
@@ -517,17 +523,23 @@ function renderMiniCalendar(){
 
         if(dayReminders && dayReminders.length){
             cell.classList.add("has-reminder");
+            monthReminderCount += dayReminders.length;
 
             const dotsWrap = document.createElement("div");
             dotsWrap.className = "mc-dots";
 
+            let topLevel = "unknown";
             dayReminders.slice(0, 3).forEach(r => {
                 const level = urgencyLevel(r.deadline);
+                if(level === "urgent") monthUrgentCount++;
+                if(levelRank[level] > levelRank[topLevel]) topLevel = level;
+
                 const dot = document.createElement("span");
                 dot.className = `mc-dot ${level === "unknown" ? "safe" : level}`;
                 dotsWrap.appendChild(dot);
             });
 
+            cell.classList.add(`tint-${topLevel === "unknown" ? "safe" : topLevel}`);
             cell.appendChild(dotsWrap);
 
             const tooltip = document.createElement("div");
@@ -539,5 +551,13 @@ function renderMiniCalendar(){
         }
 
         grid.appendChild(cell);
+    }
+
+    if(monthReminderCount === 0){
+        foot.innerHTML = `No deadlines this month`;
+    } else if(monthUrgentCount > 0){
+        foot.innerHTML = `<strong>${monthReminderCount}</strong> this month · <strong style="color:var(--coral)">${monthUrgentCount} urgent</strong>`;
+    } else {
+        foot.innerHTML = `<strong>${monthReminderCount}</strong> reminder${monthReminderCount > 1 ? "s" : ""} this month`;
     }
 }
