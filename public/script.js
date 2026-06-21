@@ -5,7 +5,7 @@ let latestAnalysis = null;
 // - Production: set window.MAILMIND_API_BASE in a small inline script
 //   in index.html (see comment near the </head> tag) to your deployed
 //   Render/Railway backend URL, e.g. "https://mailmind-api.onrender.com"
-const API_BASE = window.MAILMIND_API_BASE || "http://localhost:3000";
+const API_BASE = "https://mailmind-ai-zpdr.onrender.com";
 
 function showPage(pageId, btn){
     document.getElementById("analyzePage").style.display = "none";
