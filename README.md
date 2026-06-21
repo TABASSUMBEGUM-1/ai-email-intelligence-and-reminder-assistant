@@ -42,6 +42,7 @@ Reminders sorted by urgency, with color-coded deadlines.
   - 🟢 Green — due later, no rush
 - **Urgent alerts in the bell icon** — a pulsing indicator appears the moment any reminder is close to its deadline.
 - **One-click delete** — remove individual reminders without clearing everything.
+- **Deadline Over Alert** — automatically warns the user when an analyzed email contains a deadline that has already    passed.
 - **Light/dark theme toggle** with a collapsible sidebar.
 - **Fully responsive UI** — works cleanly on desktop and mobile.
 
@@ -135,7 +136,7 @@ The frontend talks to the backend at `http://localhost:3000` by default — make
 ## ⚠️ Known Limitations
 
 - Reminders are stored in browser `localStorage`, so they're local to one device/browser and not synced across sessions or devices.
-- Gemini's free tier has a daily request quota (20 requests/day on some models) — heavy testing can temporarily exhaust it.
+- Gemini's free tier has a daily request quota (unknown requests/day on some models) — heavy testing can temporarily exhaust it.
 - Gmail integration and automated alerts are not yet implemented — see Roadmap above.
 
 ---
