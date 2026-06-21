@@ -203,8 +203,16 @@ function priorityClass(priority){
 }
 
 function renderResult(parsed){
+
     const resultDiv = document.getElementById("result");
     const pClass = priorityClass(parsed.priority);
+
+    // Check if deadline is over
+    const days = daysUntil(parsed.deadline);
+
+    if(days !== null && days < 0){
+        showDeadlinePopup();
+    }
 
     resultDiv.classList.add("materializing");
     setTimeout(() => resultDiv.classList.remove("materializing"), 550);
@@ -215,22 +223,29 @@ function renderResult(parsed){
                 <span class="result-label">Title</span>
                 <span class="result-value">${escapeHtml(parsed.title)}</span>
             </div>
+
             <div class="result-field" style="animation-delay:0.12s">
                 <span class="result-label">Category</span>
                 <span class="result-value">${escapeHtml(parsed.category)}</span>
             </div>
+
             <div class="result-field" style="animation-delay:0.18s">
                 <span class="result-label">Deadline</span>
                 <span class="result-value">${escapeHtml(parsed.deadline)}</span>
             </div>
+
             <div class="result-field full" style="animation-delay:0.24s">
                 <span class="result-label">Task</span>
                 <span class="result-value">${escapeHtml(parsed.task)}</span>
             </div>
+
             <div class="result-field" style="animation-delay:0.3s">
                 <span class="result-label">Priority</span>
-                <span class="priority-pill ${pClass}">${parsed.priority} / 100</span>
+                <span class="priority-pill ${pClass}">
+                    ${parsed.priority} / 100
+                </span>
             </div>
+
             <div class="result-field full" style="animation-delay:0.36s">
                 <span class="result-label">Summary</span>
                 <span class="result-value">${escapeHtml(parsed.summary)}</span>
@@ -302,11 +317,18 @@ function clearReminders(){
 
 // Returns days remaining (can be negative if overdue), or null if unparseable
 function daysUntil(deadlineStr){
+
     if(!deadlineStr || /not mentioned|n\/a|unknown|none/i.test(deadlineStr)){
         return null;
     }
 
-    const parsed = Date.parse(deadlineStr);
+    let cleaned = deadlineStr
+        .replace(/(\d+)(st|nd|rd|th)/gi, "$1")
+        .replace(/by/gi, "")
+        .trim();
+
+    const parsed = Date.parse(cleaned);
+
     if(isNaN(parsed)){
         return null;
     }
@@ -318,7 +340,10 @@ function daysUntil(deadlineStr){
     target.setHours(0,0,0,0);
 
     const diffMs = target - today;
-    return Math.round(diffMs / (1000 * 60 * 60 * 24));
+
+    return Math.round(
+        diffMs / (1000 * 60 * 60 * 24)
+    );
 }
 
 // Returns "urgent" | "soon" | "safe" | "unknown"
@@ -560,4 +585,11 @@ function renderMiniCalendar(){
     } else {
         foot.innerHTML = `<strong>${monthReminderCount}</strong> reminder${monthReminderCount > 1 ? "s" : ""} this month`;
     }
+}
+function showDeadlinePopup(){
+    document.getElementById("deadlinePopup").style.display = "flex";
+}
+
+function closePopup(){
+    document.getElementById("deadlinePopup").style.display = "none";
 }
