@@ -7,6 +7,24 @@ MailMind AI reads through internship offers, hackathon invites, workshop announc
 
 ---
 
+## 📸 Screenshots
+
+### Email Analysis
+Paste any email and get an instant structured breakdown.
+
+![Analyze screen](./screenshots/analysis-of-mail.png)
+
+### Reminder Dashboard
+Reminders sorted by urgency, with color-coded deadlines.
+
+![Dashboard screen](./screenshots/reminder-dashboard-dark-theme.png)
+
+### Light Mode
+![Light theme](./screenshots/light-theme.png)
+
+
+---
+
 ## ✨ Features
 
 - **AI-powered email analysis** — paste any email and get back a clean breakdown: title, category, task, deadline, priority score, and a one-line summary.
