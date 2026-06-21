@@ -39,10 +39,42 @@
     <span class="nav-badge" id="reminderCount">0</span>
   </button>
 
+  <div class="mini-calendar" id="miniCalendar">
+    <div class="mc-head">
+      <button id="mcPrev" class="mc-nav-btn" aria-label="Previous month">‹</button>
+      <span id="mcMonthLabel" class="mc-month-label"></span>
+      <button id="mcNext" class="mc-nav-btn" aria-label="Next month">›</button>
+    </div>
+    <div class="mc-weekdays">
+      <span>S</span><span>M</span><span>T</span><span>W</span><span>T</span><span>F</span><span>S</span>
+    </div>
+    <div class="mc-grid" id="mcGrid"></div>
+  </div>
+
   <div class="sidebar-foot">Built for inboxes that don't wait.</div>
 </nav>
 
 <main class="main-content">
+
+  <div id="onboardingOverlay" class="onboarding-overlay">
+    <div class="onboarding-card">
+      <span class="onboarding-eyebrow">Quick setup</span>
+      <h2>What matters in your inbox?</h2>
+      <p class="onboarding-sub">Pick what you don't want to miss. We'll prioritize these when you analyze emails.</p>
+
+      <div class="onboarding-grid" id="onboardingGrid">
+        <button class="onb-chip" data-value="Internship">💼 Internships</button>
+        <button class="onb-chip" data-value="Hackathon">🚀 Hackathons</button>
+        <button class="onb-chip" data-value="Workshop">🎓 Workshops</button>
+        <button class="onb-chip" data-value="Meeting">📅 Meetings</button>
+        <button class="onb-chip" data-value="HR Update">🏢 HR Updates</button>
+        <button class="onb-chip" data-value="Fee Payment">💰 Fee Deadlines</button>
+      </div>
+
+      <button id="onboardingDone" class="onboarding-cta">Get Started</button>
+      <button id="onboardingSkip" class="onboarding-skip">Skip for now</button>
+    </div>
+  </div>
 
   <section id="analyzePage" class="page">
     <div class="container">
@@ -58,10 +90,18 @@
         </div>
       </header>
 
-      <textarea
-        id="emailInput"
-        placeholder="Paste your email, internship offer, workshop invitation, hackathon announcement, HR update or meeting reminder..."
-      ></textarea>
+      <p class="personalized-tag" id="personalizedTag" style="display:none;"></p>
+
+      <div class="input-wrap">
+        <textarea
+          id="emailInput"
+          placeholder="Paste your email, internship offer, workshop invitation, hackathon announcement, HR update or meeting reminder..."
+        ></textarea>
+        <div class="scan-overlay" id="scanOverlay">
+          <div class="scan-line"></div>
+          <div class="scan-particles" id="scanParticles"></div>
+        </div>
+      </div>
 
       <button id="analyzeBtn" onclick="analyzeEmail()">
         <span class="btn-label">Analyze with AI</span>

@@ -28,6 +28,9 @@ function showPage(pageId, btn){
 window.onload = function(){
     renderReminders();
     updateBellCounts();
+    initOnboarding();
+    renderPersonalizedTag();
+    initMiniCalendar();
 
     const savedTheme = localStorage.getItem("theme");
     if(savedTheme === "light"){
@@ -36,14 +39,69 @@ window.onload = function(){
     }
 };
 
+/* ---------------- Onboarding ---------------- */
+
+function initOnboarding(){
+    const done = localStorage.getItem("onboardingDone");
+    if(done) return;
+
+    const overlay = document.getElementById("onboardingOverlay");
+    const grid = document.getElementById("onboardingGrid");
+    const ctaBtn = document.getElementById("onboardingDone");
+    const skipBtn = document.getElementById("onboardingSkip");
+
+    let selected = new Set();
+
+    requestAnimationFrame(() => overlay.classList.add("show"));
+
+    grid.querySelectorAll(".onb-chip").forEach(chip => {
+        chip.addEventListener("click", () => {
+            const val = chip.dataset.value;
+            if(selected.has(val)){
+                selected.delete(val);
+                chip.classList.remove("selected");
+            } else {
+                selected.add(val);
+                chip.classList.add("selected");
+            }
+        });
+    });
+
+    function closeOnboarding(prefs){
+        localStorage.setItem("onboardingDone", "1");
+        localStorage.setItem("emailPreferences", JSON.stringify(prefs));
+        overlay.classList.remove("show");
+        setTimeout(() => overlay.style.display = "none", 300);
+        renderPersonalizedTag();
+    }
+
+    ctaBtn.addEventListener("click", () => closeOnboarding(Array.from(selected)));
+    skipBtn.addEventListener("click", () => closeOnboarding([]));
+}
+
+function renderPersonalizedTag(){
+    const tag = document.getElementById("personalizedTag");
+    const prefs = JSON.parse(localStorage.getItem("emailPreferences")) || [];
+
+    if(prefs.length === 0){
+        tag.style.display = "none";
+        return;
+    }
+
+    tag.style.display = "inline-block";
+    tag.innerText = `🎯 Watching for: ${prefs.join(", ")}`;
+}
+
 /* ---------------- Analyze ---------------- */
 
 async function analyzeEmail() {
     const loader = document.getElementById("loader");
-    const email = document.getElementById("emailInput").value.trim();
+    const emailField = document.getElementById("emailInput");
+    const email = emailField.value.trim();
     const button = document.getElementById("analyzeBtn");
     const resultDiv = document.getElementById("result");
     const saveBtn = document.getElementById("saveReminderBtn");
+    const scanOverlay = document.getElementById("scanOverlay");
 
     if(!email){
         alert("Paste an email first!");
@@ -56,6 +114,7 @@ async function analyzeEmail() {
     loader.style.display = "block";
     resultDiv.classList.remove("empty");
     resultDiv.innerHTML = "";
+    startScanEffect(scanOverlay, emailField);
 
     try {
         const response = await fetch(`${API_BASE}/analyze`, {
@@ -70,6 +129,7 @@ async function analyzeEmail() {
 
         const data = await response.json();
         loader.style.display = "none";
+        stopScanEffect(scanOverlay);
 
         const parsed = parseAnalysis(data.response);
         latestAnalysis = parsed;
@@ -79,6 +139,7 @@ async function analyzeEmail() {
     }
     catch(error){
         loader.style.display = "none";
+        stopScanEffect(scanOverlay);
         resultDiv.classList.add("empty");
         resultDiv.innerHTML = `<p class="result-placeholder">Something went wrong reaching the AI. Check your connection and try again.</p>`;
         latestAnalysis = null;
@@ -86,6 +147,36 @@ async function analyzeEmail() {
 
     button.querySelector(".btn-label").innerText = "Analyze with AI";
     button.disabled = false;
+}
+
+/* ---------------- Scan & Extract visual ---------------- */
+
+const SCAN_KEYWORDS = ["deadline","register","apply","submit","priority","urgent","due","before","meeting","workshop","internship","hackathon"];
+
+function startScanEffect(overlay, textarea){
+    overlay.classList.add("active");
+
+    const text = textarea.value;
+    const found = SCAN_KEYWORDS.filter(kw => text.toLowerCase().includes(kw));
+    const particleHost = document.getElementById("scanParticles");
+    particleHost.innerHTML = "";
+
+    const labels = found.length ? found.slice(0, 6) : ["scanning"];
+
+    labels.forEach((word, i) => {
+        const chip = document.createElement("span");
+        chip.className = "scan-particle fly";
+        chip.innerText = word;
+        chip.style.left = `${10 + (i % 3) * 30}%`;
+        chip.style.top = `${20 + Math.floor(i / 3) * 40}%`;
+        chip.style.animationDelay = `${i * 0.15}s`;
+        chip.style.setProperty("--fly-x", `${(Math.random() - 0.5) * 40}px`);
+        particleHost.appendChild(chip);
+    });
+}
+
+function stopScanEffect(overlay){
+    overlay.classList.remove("active");
 }
 
 function parseAnalysis(text){
@@ -115,29 +206,32 @@ function renderResult(parsed){
     const resultDiv = document.getElementById("result");
     const pClass = priorityClass(parsed.priority);
 
+    resultDiv.classList.add("materializing");
+    setTimeout(() => resultDiv.classList.remove("materializing"), 550);
+
     resultDiv.innerHTML = `
         <div class="result-grid">
-            <div class="result-field full">
+            <div class="result-field full" style="animation-delay:0.05s">
                 <span class="result-label">Title</span>
                 <span class="result-value">${escapeHtml(parsed.title)}</span>
             </div>
-            <div class="result-field">
+            <div class="result-field" style="animation-delay:0.12s">
                 <span class="result-label">Category</span>
                 <span class="result-value">${escapeHtml(parsed.category)}</span>
             </div>
-            <div class="result-field">
+            <div class="result-field" style="animation-delay:0.18s">
                 <span class="result-label">Deadline</span>
                 <span class="result-value">${escapeHtml(parsed.deadline)}</span>
             </div>
-            <div class="result-field full">
+            <div class="result-field full" style="animation-delay:0.24s">
                 <span class="result-label">Task</span>
                 <span class="result-value">${escapeHtml(parsed.task)}</span>
             </div>
-            <div class="result-field">
+            <div class="result-field" style="animation-delay:0.3s">
                 <span class="result-label">Priority</span>
                 <span class="priority-pill ${pClass}">${parsed.priority} / 100</span>
             </div>
-            <div class="result-field full">
+            <div class="result-field full" style="animation-delay:0.36s">
                 <span class="result-label">Summary</span>
                 <span class="result-value">${escapeHtml(parsed.summary)}</span>
             </div>
@@ -180,6 +274,7 @@ function saveReminder(){
     localStorage.setItem("reminders", JSON.stringify(reminders));
 
     updateBellCounts();
+    renderMiniCalendar();
     showPage("dashboardPage", document.querySelector('[data-page="dashboardPage"]'));
     alert("Reminder saved!");
 }
@@ -190,6 +285,7 @@ function deleteReminder(id){
     localStorage.setItem("reminders", JSON.stringify(reminders));
     renderReminders();
     updateBellCounts();
+    renderMiniCalendar();
 }
 
 function clearReminders(){
@@ -199,6 +295,7 @@ function clearReminders(){
     localStorage.removeItem("reminders");
     renderReminders();
     updateBellCounts();
+    renderMiniCalendar();
 }
 
 /* ---------------- Deadline urgency ---------------- */
@@ -334,5 +431,113 @@ function toggleTheme(){
     } else {
         btn.innerHTML = "🌙";
         localStorage.setItem("theme","dark");
+    }
+}
+
+/* ---------------- Mini Calendar ---------------- */
+
+let mcViewYear, mcViewMonth; // 0-indexed month
+
+function initMiniCalendar(){
+    const today = new Date();
+    mcViewYear = today.getFullYear();
+    mcViewMonth = today.getMonth();
+
+    document.getElementById("mcPrev").addEventListener("click", () => {
+        mcViewMonth--;
+        if(mcViewMonth < 0){ mcViewMonth = 11; mcViewYear--; }
+        renderMiniCalendar();
+    });
+
+    document.getElementById("mcNext").addEventListener("click", () => {
+        mcViewMonth++;
+        if(mcViewMonth > 11){ mcViewMonth = 0; mcViewYear++; }
+        renderMiniCalendar();
+    });
+
+    renderMiniCalendar();
+}
+
+const MONTH_NAMES = ["January","February","March","April","May","June","July","August","September","October","November","December"];
+
+function getRemindersByDateKey(){
+    const reminders = JSON.parse(localStorage.getItem("reminders")) || [];
+    const map = {};
+
+    reminders.forEach(r => {
+        if(!r.deadline) return;
+        const parsed = Date.parse(r.deadline);
+        if(isNaN(parsed)) return;
+
+        const d = new Date(parsed);
+        const key = `${d.getFullYear()}-${d.getMonth()}-${d.getDate()}`;
+
+        if(!map[key]) map[key] = [];
+        map[key].push(r);
+    });
+
+    return map;
+}
+
+function renderMiniCalendar(){
+    const grid = document.getElementById("mcGrid");
+    const label = document.getElementById("mcMonthLabel");
+    grid.innerHTML = "";
+
+    label.innerText = `${MONTH_NAMES[mcViewMonth]} ${mcViewYear}`;
+
+    const firstDay = new Date(mcViewYear, mcViewMonth, 1).getDay();
+    const daysInMonth = new Date(mcViewYear, mcViewMonth + 1, 0).getDate();
+
+    const today = new Date();
+    const isCurrentMonth = (today.getFullYear() === mcViewYear && today.getMonth() === mcViewMonth);
+
+    const remindersByDate = getRemindersByDateKey();
+
+    for(let i = 0; i < firstDay; i++){
+        const empty = document.createElement("div");
+        empty.className = "mc-day empty";
+        grid.appendChild(empty);
+    }
+
+    for(let day = 1; day <= daysInMonth; day++){
+        const cell = document.createElement("div");
+        cell.className = "mc-day";
+
+        if(isCurrentMonth && day === today.getDate()){
+            cell.classList.add("today");
+        }
+
+        const numSpan = document.createElement("span");
+        numSpan.innerText = day;
+        cell.appendChild(numSpan);
+
+        const key = `${mcViewYear}-${mcViewMonth}-${day}`;
+        const dayReminders = remindersByDate[key];
+
+        if(dayReminders && dayReminders.length){
+            cell.classList.add("has-reminder");
+
+            const dotsWrap = document.createElement("div");
+            dotsWrap.className = "mc-dots";
+
+            dayReminders.slice(0, 3).forEach(r => {
+                const level = urgencyLevel(r.deadline);
+                const dot = document.createElement("span");
+                dot.className = `mc-dot ${level === "unknown" ? "safe" : level}`;
+                dotsWrap.appendChild(dot);
+            });
+
+            cell.appendChild(dotsWrap);
+
+            const tooltip = document.createElement("div");
+            tooltip.className = "mc-tooltip";
+            tooltip.innerHTML = dayReminders.map(r =>
+                `<div class="mc-tooltip-item">${escapeHtml(r.title)}</div>`
+            ).join("");
+            cell.appendChild(tooltip);
+        }
+
+        grid.appendChild(cell);
     }
 }
