@@ -625,6 +625,69 @@ body.light-theme{
     color:#1A1F2B;
 }
 
+.light-theme .mini-calendar{
+    background:linear-gradient(165deg, rgba(245,166,35,0.06), rgba(244,245,248,0.6) 40%);
+    border-color:#E5E8EE;
+    box-shadow:0 8px 24px -16px rgba(20,30,60,0.18);
+}
+
+.light-theme .mc-head{
+    background:linear-gradient(90deg, rgba(245,166,35,0.1), rgba(248,113,113,0.05));
+    border-bottom-color:#E5E8EE;
+}
+
+.light-theme .mc-month-label{
+    color:#1A1F2B;
+}
+
+.light-theme .mc-nav-btn{
+    background:#F0F1F4;
+    color:#7A8294;
+}
+
+.light-theme .mc-nav-btn:hover{
+    background:var(--amber);
+    color:#fff;
+}
+
+.light-theme .mc-weekdays{
+    color:#9099AC;
+}
+
+.light-theme .mc-day{
+    color:#4A5168;
+}
+
+.light-theme .mc-day.today{
+    background:radial-gradient(circle, rgba(245,166,35,0.2), rgba(245,166,35,0.05));
+    color:#B9700E;
+    box-shadow:0 0 0 1.5px rgba(245,166,35,0.5);
+}
+
+.light-theme .mc-day.tint-urgent{ background:rgba(248,113,113,0.12); }
+.light-theme .mc-day.tint-soon{ background:rgba(245,166,35,0.12); }
+.light-theme .mc-day.tint-safe{ background:rgba(52,211,153,0.12); }
+
+.light-theme .mc-day.has-reminder{
+    color:#1A1F2B;
+}
+
+.light-theme .mc-day.has-reminder:hover{
+    background:rgba(0,0,0,0.06);
+}
+
+.light-theme .mc-tooltip{
+    background:#1A1F2B;
+    color:#fff;
+    border-color:rgba(245,166,35,0.4);
+}
+
+.light-theme .mc-foot{
+    background:rgba(0,0,0,0.025);
+    border-top-color:#E5E8EE;
+    color:#7A8294;
+}
+
 /* ---------- Responsive ---------- */
 
 @media (max-width:768px){
@@ -752,12 +815,6 @@ body.light-theme{
     box-shadow:0 0 0 1.5px rgba(245,166,35,0.55), 0 0 14px rgba(245,166,35,0.35);
 }
 
-.light-theme .mc-day.today{
-    background:radial-gradient(circle, rgba(245,166,35,0.18), rgba(245,166,35,0.04));
-    color:#B9700E;
-    box-shadow:0 0 0 1.5px rgba(245,166,35,0.5);
-}
-
 .mc-day.tint-urgent{ background:rgba(248,113,113,0.1); }
 .mc-day.tint-soon{ background:rgba(245,166,35,0.08); }
 .mc-day.tint-safe{ background:rgba(52,211,153,0.07); }
@@ -827,11 +884,6 @@ body.light-theme{
     transform:translateX(-50%) translateY(0);
 }
 
-.light-theme .mc-tooltip{
-    background:#1A1F2B;
-    color:#fff;
-}
-
 .mc-tooltip-item{
     line-height:1.4;
 }
@@ -856,10 +908,6 @@ body.light-theme{
 .mc-foot strong{
     color:var(--amber);
     font-weight:700;
-}
-
-.light-theme .mc-foot{
-    background:rgba(0,0,0,0.02);
 }
 
 /* ---------- Onboarding ---------- */
