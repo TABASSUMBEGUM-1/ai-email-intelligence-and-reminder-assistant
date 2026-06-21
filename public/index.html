@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MailMind AI — Inbox Signal</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+<script>
+  // Set this to your deployed backend URL after you deploy to Render/Railway.
+  // Leave as localhost while testing locally.
+  window.MAILMIND_API_BASE = "http://localhost:3000";
+  // Example for production:
+  // window.MAILMIND_API_BASE = "https://mailmind-api.onrender.com";
+</script>
+</head>
+<body>
+
+<button id="toggleSidebar" onclick="toggleSidebar()" aria-label="Toggle menu">
+  <span class="bar"></span><span class="bar"></span><span class="bar"></span>
+</button>
+
+<button id="themeBtn" onclick="toggleTheme()" aria-label="Toggle theme">🌙</button>
+
+<nav class="sidebar" id="sidebar">
+  <div class="brand">
+    <span class="brand-mark">M</span>
+    <span class="brand-name">MailMind<span class="brand-ai">AI</span></span>
+  </div>
+
+  <button class="nav-btn active" data-page="analyzePage" onclick="showPage('analyzePage', this)">
+    <span class="nav-icon">✉️</span> Analyze
+  </button>
+
+  <button class="nav-btn" data-page="dashboardPage" onclick="showPage('dashboardPage', this)">
+    <span class="nav-icon">🔔</span> Reminders
+    <span class="nav-badge" id="reminderCount">0</span>
+  </button>
+
+  <div class="sidebar-foot">Built for inboxes that don't wait.</div>
+</nav>
+
+<main class="main-content">
+
+  <section id="analyzePage" class="page">
+    <div class="container">
+
+      <header class="page-head">
+        <div>
+          <h1>Read between the lines.</h1>
+          <p class="subtitle">Paste an offer, invite, or update — get the deadline and priority in seconds.</p>
+        </div>
+        <div class="bell" id="bellAnalyze" onclick="showPage('dashboardPage', document.querySelector('[data-page=dashboardPage]'))" role="button" aria-label="Open reminders">
+          🔔<span class="bell-count" id="reminderCountTop">0</span>
+          <span class="bell-urgent" id="bellUrgentDot"></span>
+        </div>
+      </header>
+
+      <textarea
+        id="emailInput"
+        placeholder="Paste your email, internship offer, workshop invitation, hackathon announcement, HR update or meeting reminder..."
+      ></textarea>
+
+      <button id="analyzeBtn" onclick="analyzeEmail()">
+        <span class="btn-label">Analyze with AI</span>
+      </button>
+
+      <div id="loader" class="loader"></div>
+
+      <div id="result" class="result-card empty">
+        <p class="result-placeholder">Your analysis will land here — title, category, deadline and priority, parsed clean.</p>
+      </div>
+
+      <button id="saveReminderBtn" onclick="saveReminder()" disabled>
+        Save as Reminder
+      </button>
+
+    </div>
+  </section>
+
+  <section id="dashboardPage" class="page" style="display:none;">
+    <div class="container">
+
+      <header class="page-head">
+        <div>
+          <h1>Reminder Dashboard</h1>
+          <p class="subtitle">Sorted by what needs you first.</p>
+        </div>
+      </header>
+
+      <div class="legend">
+        <span class="legend-item"><i class="dot urgent"></i> Due in 2 days or less</span>
+        <span class="legend-item"><i class="dot soon"></i> Due this week</span>
+        <span class="legend-item"><i class="dot safe"></i> Due later / no rush</span>
+      </div>
+
+      <div id="reminders"></div>
+
+      <div id="emptyState" class="empty-state" style="display:none;">
+        <p>No reminders yet. Analyze an email and save it to see it here.</p>
+      </div>
+
+      <button id="clearBtn" onclick="clearReminders()">Clear All Reminders</button>
+
+    </div>
+  </section>
+
+</main>
+
+<script src="script.js"></script>
+</body>
+</html>
