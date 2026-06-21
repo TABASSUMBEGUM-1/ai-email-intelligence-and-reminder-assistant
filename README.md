@@ -8,19 +8,24 @@ MailMind AI reads through internship offers, hackathon invites, workshop announc
 ---
 
 ## 📸 Screenshots
+### First page - Inbox
+Choose what you would like to see in your inbox
 
-### Light Mode
-![Light theme](./screenshots/light-theme.png)
-
-### Reminder Dashboard
-Reminders sorted by urgency, with color-coded deadlines.
-
-![Dashboard screen](./screenshots/reminder-dashboard-dark-theme.png)
+![Inbox screen](./screenshots/first-page-of-my-site.png)
 
 ### Email Analysis
 Paste any email and get an instant structured breakdown.
 
-![Analyze screen](./screenshots/analysis-of-mail.png)
+![Analyze screen](./screenshots/analysis-of-mail-dark-theme.png)
+
+### Light Mode
+![Light theme](./screenshots/light-theme2.png)
+
+### Reminder Dashboard
+Reminders sorted by urgency, with color-coded deadlines.
+
+![Dashboard screen](./screenshots/Reminder-dashboard.png)
+
 
 
 ---
