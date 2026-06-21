@@ -9,18 +9,18 @@ MailMind AI reads through internship offers, hackathon invites, workshop announc
 
 ## 📸 Screenshots
 
-### Email Analysis
-Paste any email and get an instant structured breakdown.
-
-![Analyze screen](./screenshots/analysis-of-mail.png)
+### Light Mode
+![Light theme](./screenshots/light-theme.png)
 
 ### Reminder Dashboard
 Reminders sorted by urgency, with color-coded deadlines.
 
 ![Dashboard screen](./screenshots/reminder-dashboard-dark-theme.png)
 
-### Light Mode
-![Light theme](./screenshots/light-theme.png)
+### Email Analysis
+Paste any email and get an instant structured breakdown.
+
+![Analyze screen](./screenshots/analysis-of-mail.png)
 
 
 ---
@@ -28,6 +28,8 @@ Reminders sorted by urgency, with color-coded deadlines.
 ## ✨ Features
 
 - **AI-powered email analysis** — paste any email and get back a clean breakdown: title, category, task, deadline, priority score, and a one-line summary.
+- **Personalized onboarding** — on first visit, pick which kinds of emails matter most to you (internships, hackathons, workshops, etc.) for a tailored experience.
+- **Signature "Scan & Extract" animation** — watch the AI visually scan your pasted email and pull out key signals before the structured result appears.
 - **Smart reminders dashboard** — save analyzed emails as reminders, sorted automatically by what's most urgent.
 - **Deadline urgency color-coding** — reminders are visually flagged:
   - 🔴 Red — due in 2 days or less
@@ -37,6 +39,17 @@ Reminders sorted by urgency, with color-coded deadlines.
 - **One-click delete** — remove individual reminders without clearing everything.
 - **Light/dark theme toggle** with a collapsible sidebar.
 - **Fully responsive UI** — works cleanly on desktop and mobile.
+
+---
+
+## 🗺️ Roadmap
+
+These are deliberately **not** built yet — flagged honestly rather than faked for a demo:
+
+- **Gmail inbox integration** — auto-read incoming mail via Gmail API (OAuth) instead of manual paste-and-analyze. Needs Google API verification for sensitive scopes; planned as a proper v2 effort, not a rushed add-on.
+- **Real email/SMS deadline alerts** — server-side scheduled job that checks saved reminders daily and sends an email (via a transactional service like Resend/SendGrid) or SMS (via Twilio) when a deadline is 1–2 days out. Requires secure storage of contact info and a always-on backend job, intentionally out of scope for this build.
+- **Cross-device sync** — move reminder storage from `localStorage` to a real database so reminders follow the user across devices/browsers.
+- **Editable reminders** and category-based filtering on the dashboard.
 
 ---
 
@@ -118,17 +131,7 @@ The frontend talks to the backend at `http://localhost:3000` by default — make
 
 - Reminders are stored in browser `localStorage`, so they're local to one device/browser and not synced across sessions or devices.
 - Gemini's free tier has a daily request quota (20 requests/day on some models) — heavy testing can temporarily exhaust it.
-- Gmail inbox integration is not yet implemented — planned for a future version.
-
----
-
-## 🔮 Planned / Future Improvements
-
-- [ ] Direct Gmail inbox integration to auto-pull emails for analysis
-- [ ] Email/push notifications for upcoming deadlines
-- [ ] Edit saved reminders
-- [ ] Search and filter reminders by category
-- [ ] Persistent storage with a real database for multi-device sync
+- Gmail integration and automated alerts are not yet implemented — see Roadmap above.
 
 ---
 
